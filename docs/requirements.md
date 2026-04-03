@@ -103,7 +103,9 @@ Fields:
 - Every function must have a JSDoc comment explaining what it does
 - Use try/catch with proper HTTP status codes (400 for validation, 404 for not found, 500 for server error)
 - DELETE must check for products referencing this category before allowing deletion — return 400 with message if products exist
-- All responses follow consistent JSON format: `{ success: true, data: ... }` or `{ success: false, message: '...' }`
+- **Response format — match the existing `authController.js` pattern:**
+  - Success: return the data object directly, e.g. `res.status(201).json(category)` or `res.json(categories)`
+  - Error: `res.status(4xx|5xx).json({ message: '...' })` — no `success` wrapper key
 
 ### 1.3 Product Model & Routes
 
@@ -134,7 +136,7 @@ Fields:
 - `getProducts` must support optional query params: `search` (regex match on name, case-insensitive) and `category` (filter by category ObjectId)
 - Validate that the referenced category exists on create/update
 - Populate category name in GET responses (use `.populate('category', 'name')`)
-- Consistent error handling pattern matching categoryController
+- Same response format as `categoryController`: direct data on success, `{ message: '...' }` on error
 
 ### 1.4 Users — Admin List Endpoint
 
@@ -154,7 +156,7 @@ These are what separate HD from Distinction:
 - **Consistent error handling:** Create a simple error response helper or use consistent try/catch patterns. Never send raw error objects to the client.
 - **Input validation:** Validate required fields, types, and constraints in controllers (or use express-validator if time permits — but manual validation is fine).
 - **Clean file structure:** Follow the starter project's pattern. Don't over-engineer — match the existing style.
-- **Environment variables:** Use `.env` for `MONGO_URI`, `JWT_SECRET`, `PORT`. Document all in README.
+- **Environment variables:** Use `.env` for `MONGO_URI`, `JWT_SECRET`, `PORT`. Document all in README. `backend/.env.example` already exists with placeholder values — keep it committed and never commit the real `.env`.
 
 ### 1.6 File Structure (Backend)
 
@@ -166,6 +168,9 @@ backend/
 │   ├── authController.js        # (existing, modify) Add user list
 │   ├── categoryController.js    # (new) Full CRUD
 │   └── productController.js     # (new) Full CRUD
+├── docs/                        # (existing, empty) Backend-specific documentation
+│   ├── api-reference.md         # (new, Day 1–2) All REST endpoints
+│   └── data-models.md           # (new, Day 1–2) Mongoose schema reference
 ├── middleware/
 │   ├── authMiddleware.js        # (existing) JWT verification
 │   └── adminMiddleware.js       # (new) Role check
@@ -179,7 +184,8 @@ backend/
 │   └── productRoutes.js         # (new)
 ├── seed.js                      # (new) Seed script
 ├── server.js                    # (existing, modify) Register new routes
-├── .env                         # (existing, modify)
+├── .env                         # (existing, modify) — never commit this
+├── .env.example                 # (existing) placeholder values for onboarding — keep committed
 └── package.json
 ```
 
@@ -221,48 +227,73 @@ Update the Navbar component:
 ### 2.3 Component Structure
 
 ```
-frontend/src/
-├── components/
-│   ├── Navbar.js                # (existing, modify) Update links & branding
-│   ├── ProductForm.js           # (new) Reusable for Add/Edit
-│   ├── ProductList.js           # (new) Table with search/filter
-│   ├── CategoryList.js          # (new) Table with inline add/edit/delete
-│   ├── CategoryForm.js          # (new) Modal or inline form
-│   ├── UserList.js              # (new) Read-only table
-│   ├── Dashboard.js             # (new) Summary cards
-│   └── ProtectedRoute.js        # (new or existing) Redirect to login if not authed
-├── context/
-│   └── AuthContext.js           # (existing) Keep as-is
-├── pages/
-│   ├── LoginPage.js             # (existing, modify) Update text
-│   ├── RegisterPage.js          # (existing, modify) Update text
-│   ├── ProfilePage.js           # (existing, modify) Clean up
-│   ├── DashboardPage.js         # (new)
-│   ├── ProductListPage.js       # (new)
-│   ├── AddProductPage.js        # (new)
-│   ├── EditProductPage.js       # (new)
-│   ├── CategoryListPage.js      # (new)
-│   └── UserListPage.js          # (new)
-├── App.js                       # (modify) Update routes
-└── axiosConfig.js               # (existing, modify) Update base URL
+frontend/
+├── docs/                            # (existing, empty) Frontend-specific documentation
+│   └── component-guide.md           # (new, Day 3) Component tree, props, Tailwind conventions
+└── src/
+    ├── components/
+    │   ├── Navbar.jsx               # (existing, modify) Update links & branding
+    │   ├── ProductForm.jsx          # (new) Reusable for Add/Edit
+    │   ├── ProductList.jsx          # (new) Table with search/filter
+    │   ├── CategoryList.jsx         # (new) Table with inline add/edit/delete
+    │   ├── CategoryForm.jsx         # (new) Modal or inline form
+    │   ├── UserList.jsx             # (new) Read-only table
+    │   ├── Dashboard.jsx            # (new) Summary cards
+    │   └── ProtectedRoute.jsx       # (new) Redirect to login if not authed
+    ├── context/
+    │   └── AuthContext.js           # (existing) Keep as-is
+    ├── pages/
+    │   ├── Login.jsx                # (existing, modify) Update text — note: no "Page" suffix
+    │   ├── Register.jsx             # (existing, modify) Update text
+    │   ├── Profile.jsx              # (existing, modify) Clean up
+    │   ├── Dashboard.jsx            # (new)
+    │   ├── ProductList.jsx          # (new)
+    │   ├── AddProduct.jsx           # (new)
+    │   ├── EditProduct.jsx          # (new)
+    │   ├── CategoryList.jsx         # (new)
+    │   └── UserList.jsx             # (new)
+    ├── App.js                       # (existing, modify) Update routes
+    └── axiosConfig.jsx              # (existing, modify) Update base URL for production
 ```
+
+**File naming conventions (match existing codebase):**
+- Components and pages use `.jsx` extension
+- Context files (`AuthContext.js`) and config files (`App.js`) use `.js`
+- Page filenames have no "Page" suffix — e.g. `Login.jsx` not `LoginPage.jsx`
+- If a page and component share a name (e.g. `ProductList`), put them in their respective `pages/` and `components/` folders
 
 ### 2.4 Frontend Code Quality Standards (for HD)
 
 - **React best practices:** Functional components with hooks (useState, useEffect, useContext). No class components.
 - **Loading states:** Show a spinner or "Loading..." while fetching data. Every API call should have a loading state.
-- **Error handling:** Display user-friendly error messages (toast or inline). Never show raw API errors.
+- **Error handling:** Display user-friendly error messages (toast or inline). Never show raw API errors. Since the backend returns `{ message: '...' }` on errors, display `error.response?.data?.message` or a fallback string.
 - **Form validation:** Validate on the client side before submitting (required fields, price > 0, etc.).
-- **Responsive design:** All pages must work on mobile. Use CSS flexbox/grid. Test at 375px and 1024px+ breakpoints.
+- **Responsive design:** All pages must work on mobile. Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`). Test at 375px and 1024px+ breakpoints.
 - **Clean code:** Consistent naming, no dead code, no console.logs left in. Comments on complex logic.
 - **Confirmation dialogs:** Before any delete action, show a confirm dialog.
+- **Auth token — match existing pattern:** The existing `Profile.jsx` passes the token per-request: `{ headers: { Authorization: \`Bearer ${user.token}\` } }`. Follow this same pattern in all protected API calls, reading `user.token` from `useAuth()`. The `user` object in context stores the raw login response `{ id, name, email, token }`.
+- **Session persistence:** The current `AuthContext` resets on page refresh (no localStorage). Add localStorage persistence to `AuthContext`: save `user` to `localStorage` on `login()`, clear it on `logout()`, and initialise state with `useState(() => JSON.parse(localStorage.getItem('user')) || null)`. Without this, refreshing the page while navigating to screenshots will log the user out.
 
 ### 2.5 Styling Approach
 
-Keep it simple — don't spend time on elaborate designs. Options (pick one):
-- **Plain CSS / CSS Modules** — the starter likely uses this. Match its style.
-- **A lightweight CSS framework** (e.g., Bootstrap via CDN) — fastest way to get a clean, responsive UI.
-- Do NOT spend time implementing the Figma designs pixel-perfect. The rubric says "responsive, clean UI using React best practices" — not "matches your Figma mockup."
+**Use Tailwind CSS — it is already installed and configured.** Do not add Bootstrap or a second CSS framework.
+
+The project already has:
+- `tailwindcss@^3` in `frontend/devDependencies`
+- `frontend/tailwind.config.js` scanning `./src/**/*.{js,jsx,ts,tsx}`
+- `postcss` and `autoprefixer` also installed
+
+**What to do:**
+- `frontend/src/index.css` already contains the three `@tailwind` directives — do not modify it
+- Use Tailwind utility classes directly in JSX — follow the pattern already established in `Navbar.jsx`, `Login.jsx`, `Register.jsx`, and `Profile.jsx`
+- Use responsive prefixes (`sm:`, `md:`, `lg:`) for the mobile requirement — test at 375px and 1024px+
+- Keep class strings readable — if a class list grows beyond ~8 utilities, extract it into a named `const` above the JSX or a small helper component
+- **Tailwind best practices:**
+  - Prefer utility composition over `@apply` (avoid `@apply` except for truly global reusable patterns)
+  - Use `clsx` or template literals for conditional classes (e.g. active nav link, error states)
+  - Stick to the default Tailwind palette — don't introduce custom colours unless necessary
+
+Do NOT spend time implementing Figma designs pixel-perfect. The rubric grades "responsive, clean UI using React best practices" — not visual fidelity.
 
 ---
 
@@ -278,9 +309,12 @@ Keep it simple — don't spend time on elaborate designs. Options (pick one):
 
 ### 3.2 What to Add
 
-- **Role-based access:** Add `role` field to User model. Create `adminMiddleware.js` that checks role after auth.
-- **Protected routes (backend):** All `/api/categories`, `/api/products`, `/api/auth/users` routes use both `authMiddleware` + `adminMiddleware`.
-- **Protected routes (frontend):** Create a `ProtectedRoute` wrapper component. If user is not logged in, redirect to `/login`. If a non-admin tries to access admin pages, redirect to login or show "Access Denied."
+- **Role-based access:** Add `role` field to User model. Create `middleware/adminMiddleware.js` that checks role after auth.
+- **`adminMiddleware.js` — match existing middleware pattern:**
+  - Export a named function: `module.exports = { adminCheck }` (mirrors `authMiddleware.js` exporting `{ protect }`)
+  - If `req.user.role !== 'admin'`, respond with **HTTP 403** and body `{ message: 'Access denied. Admins only.' }` — do not call `next()`. This matches the `{ message: '...' }` error format used throughout `authController.js`.
+- **Protected routes (backend):** All `/api/categories`, `/api/products`, `/api/auth/users` routes chain both middleware functions. Follow the exact same pattern as `authRoutes.js`: `router.get('/', protect, adminCheck, getCategories)` — import `{ protect }` from `authMiddleware` and `{ adminCheck }` from `adminMiddleware`.
+- **Protected routes (frontend):** Create `ProtectedRoute.jsx` using React Router v6 (`<Navigate to="/login" />` — not v5 `<Redirect>`). If `user` from `useAuth()` is null, redirect to `/login`. If a non-admin tries to access admin pages, a 403 from the API is sufficient — no separate frontend role check is strictly required, but is a nice-to-have.
 - **Seed an admin user:** The seed script must create at least one admin account with known credentials.
 
 ### 3.3 Documentation Requirements
@@ -363,17 +397,68 @@ The rubric says: "step by step screenshot of CI/CD pipeline details." Capture:
 
 ### 5.4 Test File
 
-The starter has `example_test.js` that will fail. You need to either:
-- **Option A:** Write basic tests for your models/routes (ideal for HD, shows thoroughness)
-- **Option B:** Update the test file to have at least one passing test (minimum viable)
+**⚠️ The existing `backend/test/example_test.js` will break the pipeline immediately.** It imports `../models/Task` and `../controllers/taskController` — both of which don't exist once the task manager placeholder is removed. The CI pipeline runs `npm test` (Mocha) before deploying; a failing test blocks deployment entirely.
 
-Recommended (time-permitting): Write 3-5 basic tests using the starter's test framework:
-- Test that Product model requires name and price
-- Test that Category model requires name
-- Test that GET /api/products returns 401 without auth token
-- Test that POST /api/categories creates a category with valid data
+**This is not optional for HD.** Replace `example_test.js` with tests for your new controllers.
 
-If time is too tight, at minimum ensure the test step doesn't break the pipeline.
+#### Test Stack (already installed — no new packages needed)
+
+| Package | Role | Location |
+|---|---|---|
+| `mocha@^11` | Test runner | `devDependencies` |
+| `chai@^4` + `chai-http@^4` | Assertions | `dependencies` |
+| `sinon@^19` | Stubs & spies | `devDependencies` |
+| `mongoose` | ObjectId helpers in tests | `dependencies` |
+
+Run tests: `cd backend && npm test`
+
+#### Required Tests (minimum for HD)
+
+Write one test file per controller in `backend/test/`. Follow the **5-step pattern** (Stub → Mock req/res → Call → Assert → Restore) for every `it` block. Never connect to a real database — always stub the Mongoose method.
+
+**`categoryController_test.js`** — minimum 3 tests:
+- `getCategories` → returns all categories (200)
+- `createCategory` → creates successfully (201)
+- `createCategory` → returns 500 on DB error
+
+**`productController_test.js`** — minimum 3 tests:
+- `getProducts` → returns all products (200)
+- `createProduct` → creates successfully (201)
+- `deleteProduct` → returns 404 if product not found
+
+**`authController_test.js`** — minimum 2 tests:
+- `getUsers` → returns user list for admin (200)
+- `getUsers` → returns 500 on DB error
+
+#### Test File Structure
+
+```js
+const chai = require('chai');
+const sinon = require('sinon');
+const mongoose = require('mongoose');
+const { expect } = chai;
+
+const Category = require('../models/Category');
+const { getCategories, createCategory } = require('../controllers/categoryController');
+
+describe('getCategories', () => {
+  it('should return all categories', async () => {
+    // 1. Stub
+    const stub = sinon.stub(Category, 'find').resolves([{ name: 'Dogs' }]);
+    // 2. Mock req/res
+    const req = {};
+    const res = { status: sinon.stub().returnsThis(), json: sinon.spy() };
+    // 3. Call
+    await getCategories(req, res);
+    // 4. Assert
+    expect(res.json.calledOnce).to.be.true;
+    // 5. Restore
+    stub.restore();
+  });
+});
+```
+
+If time is genuinely too tight, at minimum delete the content of `example_test.js` and replace it with one passing smoke test so the pipeline stays green.
 
 ---
 
@@ -489,23 +574,148 @@ The submission report needs screenshots as evidence. Based on the rubric and sub
 
 Given <1 week, follow this exact order. Each step maps to a feature branch.
 
+### 9.1 Documentation Files to Create
+
+Four supporting docs are woven into the plan below (marked 📄). Each lives close to the code it describes:
+
+| File | Location | Created | Updated |
+|---|---|---|---|
+| `git-workflow.md` | `docs/` | Day 1 | Never (stable) |
+| `api-reference.md` | `backend/docs/` | Day 1 | Day 2 |
+| `data-models.md` | `backend/docs/` | Day 1 | Day 2 |
+| `component-guide.md` | `frontend/docs/` | Day 3 | Day 3 |
+
+---
+
+**`docs/git-workflow.md`** — project-level, created on Day 1 before the first feature branch:
+```markdown
+# Git Workflow
+
+## Branch Naming
+feature/<short-description>   e.g. feature/category-crud
+
+## Commit Message Format
+<type>: <short description>
+Types: feat | fix | docs | style | refactor | test | chore
+Examples:
+  feat: add Category model and CRUD routes
+  fix: handle duplicate category name error
+  docs: complete API reference for product routes
+
+## PR Checklist
+- [ ] Branch is up to date with main
+- [ ] All tests pass locally (npm test from backend/)
+- [ ] No console.logs, no .env committed
+- [ ] PR title matches the feature branch purpose
+```
+
+---
+
+**`backend/docs/api-reference.md`** — started Day 1, completed Day 2:
+```markdown
+# Petopia API Reference
+
+Base URL: http://localhost:5001
+
+## Authentication
+All protected routes require: Authorization: Bearer <token>
+
+## Auth Routes (/api/auth)
+| Method | Endpoint  | Auth  | Body / Params             | Response                   |
+|--------|-----------|-------|---------------------------|----------------------------|
+| POST   | /register | None  | { name, email, password } | { id, name, email, token } |
+| POST   | /login    | None  | { email, password }       | { id, name, email, token } |
+| GET    | /profile  | User  | —                         | { name, email, ... }       |
+| PUT    | /profile  | User  | { name, email, ... }      | { id, name, email, token } |
+| GET    | /users    | Admin | —                         | [{ name, email, role, createdAt }] |
+
+## Category Routes (/api/categories)
+...
+
+## Product Routes (/api/products)
+...
+```
+
+---
+
+**`backend/docs/data-models.md`** — started Day 1 (User, Category), completed Day 2 (Product):
+```markdown
+# Data Models
+
+## User
+| Field      | Type   | Required | Notes                          |
+|------------|--------|----------|--------------------------------|
+| name       | String | ✅       |                                |
+| email      | String | ✅       | unique                         |
+| password   | String | ✅       | bcrypt-hashed via pre-save hook |
+| role       | String | —        | enum: admin, customer; default: customer |
+| createdAt  | Date   | —        | default: Date.now              |
+
+## Category
+...
+
+## Product
+...
+```
+
+---
+
+**`frontend/docs/component-guide.md`** — created Day 3 alongside the UI:
+```markdown
+# Frontend Component Guide
+
+## Route Map
+| Route              | Page component     | Auth required |
+|--------------------|--------------------|---------------|
+| /login             | Login.jsx          | No            |
+| /dashboard         | Dashboard.jsx      | Yes           |
+| /products          | ProductList.jsx    | Yes           |
+| /products/new      | AddProduct.jsx     | Yes           |
+| /products/edit/:id | EditProduct.jsx    | Yes           |
+| /categories        | CategoryList.jsx   | Yes           |
+| /users             | UserList.jsx       | Yes           |
+
+## Shared Components
+| Component         | Props                        | Purpose                    |
+|-------------------|------------------------------|----------------------------|
+| Navbar.jsx        | —                            | Top nav, uses useAuth()    |
+| ProtectedRoute.jsx| { children }                 | Redirects if user is null  |
+| ProductForm.jsx   | { product?, onSubmit }       | Add and Edit product form  |
+| CategoryForm.jsx  | { category?, onSubmit }      | Add and Edit category form |
+
+## Tailwind Conventions
+- Form inputs: `w-full p-2 border rounded mb-4`
+- Primary button: `bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700`
+- Danger button: `bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700`
+- Page wrapper: `max-w-4xl mx-auto p-6`
+- Table: `w-full text-left border-collapse`
+```
+
+---
+
 ### Day 1: Foundation (Branches: `feature/user-model-role`, `feature/category-crud`)
 1. Fork/clone starter → create your GitHub repo
 2. Set up EC2 self-hosted runner (if not done)
-3. Add `role` field to User model
-4. Create `adminMiddleware.js`
-5. Create Category model, controller, routes
-6. Register category routes in `server.js`
-7. Test category CRUD with Postman/curl
-8. **Commit + PR:** merge `feature/user-model-role`, then `feature/category-crud`
+3. Verify `backend/.env.example` is committed with placeholder keys — it already exists, just ensure it's in the repo and `.env` is in `.gitignore`
+4. **📄 Create `docs/git-workflow.md`** — write this *before* any feature branches so every commit follows the conventions. See format in Section 9.1. Commit directly to `main` as part of initial setup.
+5. Add `role` field to User model
+6. Create `middleware/adminMiddleware.js` — export `{ adminCheck }`, return 403 + `{ message: 'Access denied. Admins only.' }` for non-admins
+7. Create Category model, controller, routes
+8. Register category routes in `server.js`
+9. Test category CRUD with Postman/curl
+10. **📄 Create `backend/docs/api-reference.md`** — document the Auth routes and Category routes with request bodies, response shapes, and auth requirements. Use the format in Section 9.1. This doubles as your Postman reference.
+11. **📄 Create `backend/docs/data-models.md`** — document the User and Category schemas (fields, types, constraints, relationships). Use the format in Section 9.1.
+12. **Commit + PR:** merge `feature/user-model-role`, then `feature/category-crud`
 
 ### Day 2: Products (Branch: `feature/product-crud`)
 1. Create Product model, controller, routes
 2. Register product routes in `server.js`
 3. Test product CRUD with Postman/curl (including search/filter)
-4. Start frontend: replace task components with product list page
-5. Build ProductForm component (add/edit)
-6. **Commit + PR:** merge `feature/product-crud`
+4. **📄 Update `backend/docs/api-reference.md`** — add the Product routes (all 5 endpoints, including `?search=` and `?category=` query params) and `GET /api/auth/users`. The API reference is now complete for the full backend surface.
+5. **📄 Update `backend/docs/data-models.md`** — add the Product schema. All three models are now documented.
+6. Start frontend: replace task components with product list page
+7. Build ProductForm component (add/edit)
+8. **Commit + PR:** merge `feature/product-crud`
 
 ### Day 3: Admin UI (Branch: `feature/admin-dashboard`)
 1. Build Dashboard page (stat cards)
@@ -515,7 +725,8 @@ Given <1 week, follow this exact order. Each step maps to a feature branch.
 5. Update Login/Register pages — rebrand text
 6. Add ProtectedRoute component
 7. Update App.js routes
-8. **Commit + PR:** merge `feature/admin-dashboard`
+8. **📄 Create `frontend/docs/component-guide.md`** — now that all components and pages exist, document the route map, each shared component's props and purpose, and the Tailwind class conventions used throughout. Use the format in Section 9.1.
+9. **Commit + PR:** merge `feature/admin-dashboard`
 
 ### Day 4: Polish + CI/CD (Branch: `feature/ui-polish`)
 1. Responsive CSS — test all pages at mobile and desktop
@@ -523,14 +734,14 @@ Given <1 week, follow this exact order. Each step maps to a feature branch.
 3. Add error handling (try/catch on all API calls, display messages)
 4. Add delete confirmation dialogs
 5. Clean up console.logs, dead code, placeholder text
-6. Fix or write tests so CI pipeline passes
+6. **Replace `backend/test/example_test.js`** — write tests for `categoryController`, `productController`, and `authController` using Mocha + Chai + Sinon (see Section 5.4). Run `npm test` from `backend/` and confirm all pass locally before pushing.
 7. Verify GitHub Actions pipeline deploys to EC2
 8. **Commit + PR:** merge `feature/ui-polish`
 
 ### Day 5: Documentation + Final (Branch: `feature/seed-readme`)
 1. Write seed script
 2. Run seed on EC2
-3. Write README.md
+3. Write `README.md` — link to `backend/docs/api-reference.md` for the API endpoints section rather than duplicating it inline; link to `backend/docs/data-models.md` for the data model overview
 4. Verify public URL works (login, CRUD flows)
 5. Capture all screenshots for report
 6. Write report (use submission template)
@@ -553,8 +764,14 @@ Before submission, verify every item:
 - [ ] Consistent JSON response format
 - [ ] JSDoc comments on every controller function
 - [ ] No raw error objects sent to client
+- [ ] `adminMiddleware.js` exports `{ adminCheck }`, returns 403 + `{ message: 'Access denied. Admins only.' }` for non-admins
 
 ### Frontend
+- [ ] Tailwind CSS utility classes used throughout — no Bootstrap or second CSS framework
+- [ ] All new components/pages use `.jsx` extension (context + config files use `.js`)
+- [ ] `ProtectedRoute.jsx` uses React Router v6 `<Navigate>` (not v5 `<Redirect>`)
+- [ ] `AuthContext` persists `user` to localStorage — refresh does not log the user out
+- [ ] Auth token attached per-request as `Authorization: Bearer ${user.token}` (matching `Profile.jsx` pattern)
 - [ ] Dashboard shows summary counts
 - [ ] Product list with search and category filter
 - [ ] Add/Edit product form with validation
@@ -577,21 +794,27 @@ Before submission, verify every item:
 - [ ] 5+ feature branches created and merged via PR
 - [ ] 15+ meaningful commit messages
 - [ ] No direct pushes to main (all via PR)
-- [ ] Clean repo — no node_modules, no .env committed
+- [ ] Clean repo — no node_modules, no `.env` committed
+- [ ] `.env.example` committed with placeholder values
 
 ### CI/CD
 - [ ] GitHub Actions workflow triggers on push to main
-- [ ] All pipeline steps pass (green)
+- [ ] All pipeline steps pass (green) — including `npm test` in backend
+- [ ] `backend/test/example_test.js` replaced with tests for the new controllers (Mocha + Chai + Sinon, no real DB)
 - [ ] PM2 running on EC2 (`pm2 status` shows online)
 - [ ] App accessible at public URL
 - [ ] GitHub Secrets configured
 
-### README
+### README & Supporting Docs
 - [ ] Setup instructions (backend + frontend)
 - [ ] Environment variables listed
 - [ ] Admin credentials provided
 - [ ] Public URL included
 - [ ] Tech stack described
+- [ ] `docs/git-workflow.md` committed — branch naming, commit format, PR checklist
+- [ ] `backend/docs/api-reference.md` committed and complete — all Auth, Category, and Product endpoints with request/response shapes
+- [ ] `backend/docs/data-models.md` committed and complete — User, Category, and Product schemas documented
+- [ ] `frontend/docs/component-guide.md` committed and complete — route map, shared component props, Tailwind class conventions
 
 ### Report
 - [ ] All required screenshots captured (with GitHub username + AWS visible)
