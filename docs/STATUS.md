@@ -7,8 +7,8 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | Branch | Status | PR |
 |---|---|---|
 | `feature/user-model-role` | ✅ Complete | Merged |
-| `feature/category-crud` | ✅ Complete | Pending merge |
-| `feature/product-crud` | 🔲 Not started | — |
+| `feature/category-crud` | ✅ Complete | Merged |
+| `feature/product-crud` | ✅ Complete | Pending merge |
 | `feature/admin-dashboard` | 🔲 Not started | — |
 | `feature/ui-polish` | 🔲 Not started | — |
 | `feature/seed-readme` | 🔲 Not started | — |
@@ -40,16 +40,17 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 
 ---
 
-## `feature/product-crud` 🔲
+## `feature/product-crud` ✅
 
-- [ ] `Product` model (`name`, `description`, `price`, `category`, `stock`, `imageUrl`, `createdAt`)
-- [ ] `controllers/productController.js` — full CRUD, search/filter, category populate
-- [ ] `routes/productRoutes.js` — all routes protected with `protect + adminCheck`
-- [ ] `server.js` — register `/api/products`
-- [ ] `backend/docs/api-reference.md` — Product routes added (API reference complete)
-- [ ] `backend/docs/data-models.md` — Product schema added (data models complete)
-- [ ] `backend/test/productController_test.js` — min. 3 unit tests
-- [ ] Frontend: `ProductList.jsx`, `AddProduct.jsx`, `EditProduct.jsx`, `ProductForm.jsx`
+- [x] `Product` model (`name`, `description`, `price`, `category`, `stock`, `imageUrl`, `createdAt`)
+- [x] `controllers/productController.js` — full CRUD, search/filter, category populate and validation
+- [x] `routes/productRoutes.js` — all routes protected with `protect + adminCheck`
+- [x] `server.js` — `/api/products` registered
+- [x] `backend/docs/api-reference.md` — Product routes added (API reference complete for all entities)
+- [x] `backend/docs/data-models.md` — Product schema added (data models doc complete)
+- [x] `backend/test/productController_test.js` — 10 unit tests; 24 total passing
+- [x] `categoryController.js` — lazy Product require replaced with top-level import
+- [x] Frontend: `ProductForm.jsx`, `ProductList.jsx`, `AddProduct.jsx`, `EditProduct.jsx`
 
 ---
 
