@@ -3,62 +3,64 @@ import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
 
 const Profile = () => {
-  const { user } = useAuth(); // Access user token from context
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    university: '',
-    address: '',
-  });
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({ name: '', email: '' });
+  const [meta, setMeta] = useState({ role: '', createdAt: '' });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    // Fetch profile data from the backend
     const fetchProfile = async () => {
-      setLoading(true);
       try {
-        const response = await axiosInstance.get('/api/auth/profile', {
+        const res = await axiosInstance.get('/api/auth/profile', {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        setFormData({
-          name: response.data.name,
-          email: response.data.email,
-          university: response.data.university || '',
-          address: response.data.address || '',
-        });
-      } catch (error) {
-        alert('Failed to fetch profile. Please try again.');
+        setFormData({ name: res.data.name, email: res.data.email });
+        setMeta({ role: res.data.role, createdAt: res.data.createdAt });
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to load profile.');
       } finally {
         setLoading(false);
       }
     };
-
     if (user) fetchProfile();
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setError('');
+    setSuccess('');
+    setSaving(true);
     try {
       await axiosInstance.put('/api/auth/profile', formData, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      alert('Profile updated successfully!');
-    } catch (error) {
-      alert('Failed to update profile. Please try again.');
+      setSuccess('Profile updated successfully.');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update profile.');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
-  }
+  if (loading) return <div className="text-center mt-20 text-gray-500">Loading profile…</div>;
 
   return (
-    <div className="max-w-md mx-auto mt-20">
+    <div className="max-w-md mx-auto mt-20 px-4">
       <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Your Profile</h1>
+        <h1 className="text-2xl font-bold mb-1 text-center">Your Profile</h1>
+        <p className="text-center text-sm text-gray-500 mb-5">
+          Role: <span className="font-medium capitalize">{meta.role}</span>
+          {meta.createdAt && (
+            <> · Joined {new Date(meta.createdAt).toLocaleDateString()}</>
+          )}
+        </p>
+
+        {error   && <p className="mb-4 text-red-600 bg-red-50 border border-red-200 rounded p-2 text-sm">{error}</p>}
+        {success && <p className="mb-4 text-green-600 bg-green-50 border border-green-200 rounded p-2 text-sm">{success}</p>}
+
         <input
           type="text"
           placeholder="Name"
@@ -73,22 +75,12 @@ const Profile = () => {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
-        <input
-          type="text"
-          placeholder="University"
-          value={formData.university}
-          onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Address"
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
-          {loading ? 'Updating...' : 'Update Profile'}
+        <button
+          type="submit"
+          disabled={saving}
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {saving ? 'Saving…' : 'Update Profile'}
         </button>
       </form>
     </div>
