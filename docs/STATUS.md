@@ -7,7 +7,7 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | Branch | Status | PR |
 |---|---|---|
 | `feature/user-model-role` | ✅ Complete | Merged |
-| `feature/category-crud` | 🚧 In progress | — |
+| `feature/category-crud` | ✅ Complete | Pending merge |
 | `feature/product-crud` | 🔲 Not started | — |
 | `feature/admin-dashboard` | 🔲 Not started | — |
 | `feature/ui-polish` | 🔲 Not started | — |
@@ -28,15 +28,15 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 
 ---
 
-## `feature/category-crud` 🔲
+## `feature/category-crud` ✅
 
-- [ ] `Category` model (`name`, `description`, `createdAt`)
-- [ ] `controllers/categoryController.js` — full CRUD with JSDoc comments
-- [ ] `routes/categoryRoutes.js` — all routes protected with `protect + adminCheck`
-- [ ] `server.js` — register `/api/categories`
-- [ ] `backend/docs/api-reference.md` — Category routes added
-- [ ] `backend/docs/data-models.md` — Category schema added
-- [ ] `backend/test/categoryController_test.js` — min. 3 unit tests
+- [x] `Category` model (`name`, `description`, `createdAt`)
+- [x] `controllers/categoryController.js` — full CRUD with JSDoc comments; delete blocked if products reference category
+- [x] `routes/categoryRoutes.js` — all routes protected with `protect + adminCheck`
+- [x] `server.js` — `/api/categories` registered
+- [x] `backend/docs/api-reference.md` — Category routes added
+- [x] `backend/docs/data-models.md` — Category schema added
+- [x] `backend/test/categoryController_test.js` — 8 unit tests across all 5 controller functions (13 total passing)
 
 ---
 
