@@ -1,6 +1,5 @@
 const Category = require('../models/Category');
-// Product is required lazily inside deleteCategory to avoid a missing-module error
-// before the Product model is created in feature/product-crud
+const Product = require('../models/Product');
 
 /**
  * @desc  Get all categories
@@ -101,8 +100,6 @@ const deleteCategory = async (req, res) => {
         }
 
         // Prevent deletion if products are still assigned to this category
-        // Lazy-require so this file loads cleanly before the Product model exists
-        const Product = require('../models/Product');
         const productCount = await Product.countDocuments({ category: req.params.id });
         if (productCount > 0) {
             return res.status(400).json({
