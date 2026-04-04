@@ -30,7 +30,18 @@ Tokens are returned by the `/register` and `/login` endpoints and expire after 3
 
 ## Category Routes (`/api/categories`)
 
-> _To be documented in `feature/category-crud`_
+| Method | Endpoint | Auth  | Body / Query Params          | Success Response                        |
+|--------|----------|-------|------------------------------|-----------------------------------------|
+| GET    | /        | Admin | —                            | `[{ _id, name, description, createdAt }]` |
+| GET    | /:id     | Admin | —                            | `{ _id, name, description, createdAt }` |
+| POST   | /        | Admin | `{ name, description? }`     | `{ _id, name, description, createdAt }` (201) |
+| PUT    | /:id     | Admin | `{ name?, description? }`    | `{ _id, name, description, createdAt }` |
+| DELETE | /:id     | Admin | —                            | `{ message: 'Category deleted successfully' }` |
+
+**Error responses:** `{ message: '...' }` with appropriate status (400, 404, 500)
+
+- `POST` / `PUT` return **400** if `name` is missing or already taken (duplicate)
+- `DELETE` returns **400** if any products reference this category
 
 ---
 

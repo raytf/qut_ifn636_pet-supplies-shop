@@ -20,7 +20,13 @@ Stores admin and customer accounts. Passwords are bcrypt-hashed via a `pre('save
 
 ## Category
 
-> _To be documented in `feature/category-crud`_
+Groups products into logical sections (e.g. Dogs, Cats, Birds). Cannot be deleted while products reference it.
+
+| Field       | Type   | Required | Constraints / Notes                    |
+|-------------|--------|----------|----------------------------------------|
+| name        | String | ✅       | unique, trim, maxlength 50             |
+| description | String | —        | trim, maxlength 200                    |
+| createdAt   | Date   | —        | default: `Date.now`                    |
 
 ---
 
