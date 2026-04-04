@@ -9,7 +9,6 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const User     = require('./models/User');
 const Category = require('./models/Category');
 const Product  = require('./models/Product');
@@ -52,8 +51,8 @@ const log = (msg) => process.stdout.write(`${msg}\n`);
 async function seedUser() {
     const existing = await User.findOne({ email: ADMIN.email });
     if (existing) { log(`  ↳ admin user already exists — skipped`); return; }
-    const hashed = await bcrypt.hash(ADMIN.password, 10);
-    await User.create({ ...ADMIN, password: hashed });
+    // Pass the plain-text password — the User model's pre('save') hook hashes it automatically
+    await User.create({ ...ADMIN });
     log(`  ↳ admin user created: ${ADMIN.email}`);
 }
 
