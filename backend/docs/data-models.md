@@ -32,4 +32,14 @@ Groups products into logical sections (e.g. Dogs, Cats, Birds). Cannot be delete
 
 ## Product
 
-> _To be documented in `feature/product-crud`_
+Represents a product in the pet supplies shop. Each product must belong to a Category.
+
+| Field       | Type     | Required | Constraints / Notes                        |
+|-------------|----------|----------|--------------------------------------------|
+| name        | String   | ✅       | trim, maxlength 100                        |
+| description | String   | —        | trim, maxlength 500                        |
+| price       | Number   | ✅       | min 0                                      |
+| category    | ObjectId | ✅       | ref: `Category`; validated on create/update |
+| stock       | Number   | ✅       | min 0, default 0                           |
+| imageUrl    | String   | —        | trim; URL to product image                 |
+| createdAt   | Date     | —        | default: `Date.now`                        |

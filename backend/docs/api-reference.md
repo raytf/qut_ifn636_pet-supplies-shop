@@ -47,4 +47,18 @@ Tokens are returned by the `/register` and `/login` endpoints and expire after 3
 
 ## Product Routes (`/api/products`)
 
-> _To be documented in `feature/product-crud`_
+| Method | Endpoint | Auth  | Body / Query Params                                                    | Success Response                                   |
+|--------|----------|-------|------------------------------------------------------------------------|----------------------------------------------------|
+| GET    | /        | Admin | `?search=<string>` `?category=<ObjectId>`                              | `[{ _id, name, price, category: { name }, stock, imageUrl, createdAt }]` |
+| GET    | /:id     | Admin | —                                                                      | `{ _id, name, description, price, category: { name }, stock, imageUrl, createdAt }` |
+| POST   | /        | Admin | `{ name, price, category, description?, stock?, imageUrl? }`           | same as GET /:id (201) |
+| PUT    | /:id     | Admin | `{ name?, description?, price?, category?, stock?, imageUrl? }`        | same as GET /:id |
+| DELETE | /:id     | Admin | —                                                                      | `{ message: 'Product deleted successfully' }` |
+
+**Query params (GET /):**
+- `?search=dog` — case-insensitive regex match on product name
+- `?category=<ObjectId>` — filter products by category ID
+
+**Error responses:** `{ message: '...' }` with appropriate status (400, 404, 500)
+
+- `POST` / `PUT` return **400** if `name`, `price`, or `category` are missing, price is negative, or the referenced category does not exist
