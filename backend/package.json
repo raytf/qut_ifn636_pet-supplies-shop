@@ -1,7 +1,7 @@
 {
-  "name": "task-manager-backend",
+  "name": "petopia-backend",
   "version": "1.0.0",
-  "description": "Backend for Task Manager App",
+  "description": "REST API backend for the Petopia pet supplies admin system",
   "main": "server.js",
   "scripts": {
     "test": "mocha",
@@ -26,6 +26,6 @@
     "nodemon": "^2.0.15",
     "sinon": "^19.0.5"
   },
-  "author": "Task Manager Team",
+  "author": "Petopia Team",
   "license": "ISC"
 }
