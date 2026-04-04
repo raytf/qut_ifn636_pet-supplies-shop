@@ -10,8 +10,8 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | `feature/category-crud` | ✅ Complete | Merged |
 | `feature/product-crud` | ✅ Complete | Merged |
 | `feature/admin-dashboard` | ✅ Complete | Merged |
-| `feature/ui-polish` | ✅ Complete | Pending merge |
-| `feature/seed-readme` | 🔲 Not started | — |
+| `feature/ui-polish` | ✅ Complete | Merged |
+| `feature/seed-readme` | ✅ Complete | Pending merge |
 
 ---
 
@@ -84,10 +84,11 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 
 ---
 
-## `feature/seed-readme` 🔲
+## `feature/seed-readme` ✅
 
-- [ ] `backend/seed.js` — admin user, 4–5 categories, 8–10 products
-- [ ] `README.md` — setup instructions, env vars, admin credentials, public URL
-- [ ] Seed run on EC2 instance
-- [ ] Public URL verified (login, CRUD flows working)
-- [ ] All report screenshots captured
+- [x] `backend/seed.js` — idempotent; creates admin user, 5 categories (Dogs, Cats, Birds, Fish, Small Animals), 10 products; run with `npm run seed`
+- [x] `backend/package.json` — `seed` script added (`node seed.js`)
+- [x] `README.md` — full setup guide: prerequisites, local setup, env vars table, seed credentials, available scripts, project structure, role-based access summary
+- [ ] **Manual:** Run `npm run seed` on EC2 instance (`cd backend && npm run seed`)
+- [ ] **Manual:** Verify public URL — login with `admin@petopia.com` / `Admin@1234`, test CRUD flows
+- [ ] **Manual:** Capture report screenshots
