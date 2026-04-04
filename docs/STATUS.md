@@ -9,7 +9,7 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | `feature/user-model-role` | ✅ Complete | Merged |
 | `feature/category-crud` | ✅ Complete | Merged |
 | `feature/product-crud` | ✅ Complete | Merged |
-| `feature/admin-dashboard` | 🚧 In progress | — |
+| `feature/admin-dashboard` | ✅ Complete | Pending merge |
 | `feature/ui-polish` | 🔲 Not started | — |
 | `feature/seed-readme` | 🔲 Not started | — |
 
@@ -54,17 +54,21 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 
 ---
 
-## `feature/admin-dashboard` 🔲
+## `feature/admin-dashboard` ✅
 
-- [ ] `Dashboard.jsx` — summary stat cards (products, categories, users)
-- [ ] `CategoryList.jsx` — table with add/edit/delete UI
-- [ ] `UserList.jsx` — read-only table
-- [ ] `Navbar.jsx` — rebranded to Petopia Admin, updated links
-- [ ] `Login.jsx` / `Register.jsx` — updated branding
-- [ ] `ProtectedRoute.jsx` — React Router v6 `<Navigate>`
-- [ ] `App.js` — updated routes, task pages removed
-- [ ] `AuthContext.js` — localStorage persistence added
-- [ ] `frontend/docs/component-guide.md` created
+- [x] `AuthContext.js` — localStorage persistence added (session survives refresh)
+- [x] `ProtectedRoute.jsx` — React Router v6 `<Navigate>` redirect to `/login`
+- [x] `Navbar.jsx` — rebranded to Petopia Admin, full nav links, mobile hamburger menu
+- [x] `Login.jsx` — rebranded, inline errors, redirects to `/dashboard`
+- [x] `Register.jsx` — rebranded, inline errors
+- [x] `Profile.jsx` — removed university/address, shows role and joined date, inline errors
+- [x] `Dashboard.jsx` — three stat cards (products, categories, users) fetched in parallel
+- [x] `CategoryForm.jsx` — inline add/edit form with validation
+- [x] `CategoryList.jsx` — full CRUD table with inline form, delete confirmation
+- [x] `UserList.jsx` — read-only user table with role badges
+- [x] `App.js` — all routes wired with ProtectedRoute, task routes removed
+- [x] `Tasks.jsx`, `TaskForm.jsx`, `TaskList.jsx` — removed
+- [x] `frontend/docs/component-guide.md` — route map, component props, Tailwind conventions
 
 ---
 
