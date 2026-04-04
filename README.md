@@ -7,8 +7,8 @@ Admins can manage product categories and a product catalogue with full CRUD, rol
 
 ## 🌐 Public URL
 
-> **http://\<your-ec2-ip\>:3000**
-> *(replace with the actual EC2 public IP or domain after deployment)*
+> **http://3.25.55.176**
+> *(defaults to port 80)*
 
 ---
 
