@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
 import CategoryForm from '../components/CategoryForm';
@@ -12,7 +12,10 @@ const CategoryList = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null); // category object being edited
 
-  const authHeader = { headers: { Authorization: `Bearer ${user.token}` } };
+  const authHeader = useMemo(
+    () => ({ headers: { Authorization: `Bearer ${user.token}` } }),
+    [user.token]
+  );
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -26,7 +29,7 @@ const CategoryList = () => {
       }
     };
     fetchCategories();
-  }, []);
+  }, [authHeader]);
 
   const handleAdd = async (formData) => {
     setSaving(true);
