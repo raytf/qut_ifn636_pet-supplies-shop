@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
@@ -14,7 +14,10 @@ const EditProduct = () => {
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState('');
 
-  const authHeader = { headers: { Authorization: `Bearer ${user.token}` } };
+  const authHeader = useMemo(
+    () => ({ headers: { Authorization: `Bearer ${user.token}` } }),
+    [user.token]
+  );
 
   // Fetch the existing product to pre-populate the form
   useEffect(() => {
@@ -29,7 +32,7 @@ const EditProduct = () => {
       }
     };
     fetchProduct();
-  }, [id]);
+  }, [id, authHeader]);
 
   const handleSubmit = async (formData) => {
     setLoading(true);

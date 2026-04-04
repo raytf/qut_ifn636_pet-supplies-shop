@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
@@ -12,7 +12,10 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const authHeader = { headers: { Authorization: `Bearer ${user.token}` } };
+  const authHeader = useMemo(
+    () => ({ headers: { Authorization: `Bearer ${user.token}` } }),
+    [user.token]
+  );
 
   // Fetch categories once for the filter dropdown
   useEffect(() => {
@@ -25,7 +28,7 @@ const ProductList = () => {
       }
     };
     fetchCategories();
-  }, []);
+  }, [authHeader]);
 
   // Re-fetch products whenever search or category filter changes
   useEffect(() => {
@@ -46,7 +49,7 @@ const ProductList = () => {
       }
     };
     fetchProducts();
-  }, [search, categoryFilter]);
+  }, [search, categoryFilter, authHeader]);
 
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
