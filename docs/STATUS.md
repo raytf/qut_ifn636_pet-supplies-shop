@@ -10,8 +10,8 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | `feature/category-crud` | ✅ Complete | Merged |
 | `feature/product-crud` | ✅ Complete | Merged |
 | `feature/admin-dashboard` | ✅ Complete | Merged |
-| `feature/ui-polish` | ✅ Complete | Pending merge |
-| `feature/seed-readme` | 🔲 Not started | — |
+| `feature/ui-polish` | ✅ Complete | Merged |
+| `feature/seed-readme` | 🚧 In progress | — |
 
 ---
 
