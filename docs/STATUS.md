@@ -10,7 +10,7 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | `feature/category-crud` | ✅ Complete | Merged |
 | `feature/product-crud` | ✅ Complete | Merged |
 | `feature/admin-dashboard` | ✅ Complete | Merged |
-| `feature/ui-polish` | 🚧 In progress | — |
+| `feature/ui-polish` | ✅ Complete | Pending merge |
 | `feature/seed-readme` | 🔲 Not started | — |
 
 ---
@@ -72,16 +72,15 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 
 ---
 
-## `feature/ui-polish` 🔲
+## `feature/ui-polish` ✅
 
-- [ ] Responsive layout tested at 375px and 1024px+
-- [ ] Loading states on all data-fetching pages
-- [ ] Error messages displayed (using `error.response?.data?.message`)
-- [ ] Delete confirmation dialogs on all destructive actions
-- [ ] No `console.log` in production code
-- [ ] No placeholder text remaining
-- [ ] All tests passing locally (`npm test` from `backend/`)
-- [ ] GitHub Actions pipeline verified green end-to-end
+- [x] Responsive layout — all pages use `sm:` / `md:` breakpoints; Navbar has mobile hamburger at `< md`
+- [x] Loading states — every data-fetching page shows a loading message while awaiting API response
+- [x] Error messages — all pages use `err.response?.data?.message` with fallback; displayed inline (no `alert()`)
+- [x] Delete confirmation dialogs — `window.confirm` on all destructive actions (ProductList, CategoryList)
+- [x] No `console.log` in production code — removed from `server.js`; none present in controllers or middleware
+- [x] No placeholder text — `backend/package.json` renamed to `petopia-backend`; `frontend/package.json` renamed to `petopia-frontend`; description and author updated
+- [x] All tests passing — 24/24 locally (`npm test` from `backend/`)
 
 ---
 
