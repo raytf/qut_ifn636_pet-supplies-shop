@@ -7,8 +7,8 @@ Tracks progress against the feature branches defined in `docs/requirements.md`.
 | Branch | Status | PR |
 |---|---|---|
 | `feature/user-model-role` | ✅ Complete | Merged |
-| `feature/category-crud` | ✅ Complete | Pending merge |
-| `feature/product-crud` | 🔲 Not started | — |
+| `feature/category-crud` | ✅ Complete | Merged |
+| `feature/product-crud` | 🚧 In progress | — |
 | `feature/admin-dashboard` | 🔲 Not started | — |
 | `feature/ui-polish` | 🔲 Not started | — |
 | `feature/seed-readme` | 🔲 Not started | — |
