@@ -37,8 +37,8 @@ Admins can manage product categories and a product catalogue with full CRUD, rol
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone [https://github.com/<your-username>/<your-repo>.git](https://github.com/raytf/qut_ifn636_pet-supplies-shop.git)
+cd qut_ifn636_pet-supplies-shop
 
 # 2. Configure backend environment variables
 cp backend/.env.example backend/.env
